@@ -126,12 +126,12 @@ var _ = Describe("Extension Manager", func() {
 
 			err = eiriniManager.RegisterExtensions()
 			Expect(err).ToNot(HaveOccurred())
-			Expect(eiriniManager.WebhookServer.CertDir).To(Equal(fmt.Sprintf("/tmp/%s", eiriniManager.Options.SetupCertificateName)))
+			Expect(eiriniManager.WebhookServer.CertDir).To(Equal(fmt.Sprintf("%s%s", os.TempDir(), eiriniManager.Options.SetupCertificateName)))
 			//	Expect(eiriniManager.WebhookServer.BootstrapOptions.MutatingWebhookConfigName).To(Equal("eirini-x-mutating-hook-default"))
 			Expect(eiriniManager.WebhookConfig.CertDir).To(Equal(eiriniManager.WebhookServer.CertDir))
 			//	Expect(eiriniManager.WebhookConfig.ConfigName).To(Equal(eiriniManager.WebhookServer.BootstrapOptions.MutatingWebhookConfigName))
 
-			Expect(afero.Exists(afero.NewOsFs(), fmt.Sprintf("/tmp/%s/tls.key", eiriniManager.Options.SetupCertificateName))).To(BeTrue())
+			Expect(afero.Exists(afero.NewOsFs(), fmt.Sprintf("%s/%s/tls.key", os.TempDir(), eiriniManager.Options.SetupCertificateName))).To(BeTrue())
 			Expect(generator.GenerateCertificateCallCount()).To(Equal(2)) // Generate CA and certificate
 			Expect(client.CreateCallCount()).To(Equal(2))                 // Persist secret and the webhook config
 		})
